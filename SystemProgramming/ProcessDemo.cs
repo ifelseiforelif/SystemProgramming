@@ -11,27 +11,108 @@ internal class ProcessDemo
 {
     public void Run()
     {
-        Console.WriteLine("Process Demo");
-        ShowAllProcesses();
+        ConsoleKeyInfo key;
+        do
+        {
+            Console.WriteLine("Process Demo");
+            Console.WriteLine("1 - ShowAllProcessesFilter");
+            Console.WriteLine("2- ShowAllProcesses");
+            Console.WriteLine("3 - GetProcessByPid");
+            Console.WriteLine("4 - CreateProcess");
+            Console.WriteLine("5 - KillProcess");
+            Console.WriteLine("0 - Exist");
+            key = Console.ReadKey();
+            switch (key.KeyChar)
+            {
+                case '1':
+                    ShowAllProcessesFilter();
+                    break;
+                case '2':
+                    ShowAllProcesses();
+                    break;
+                case '3':
+                    GetProcessByPid();
+                    break;
+                case '4':
+                    CreateProcess();
+                    break;
+                default :
+                    Console.WriteLine("unknown operation");
+                    break;
+
+            }
+        } while(key.KeyChar != '0');
+      
+
     }
 
-    private void ShowAllProcesses()
+
+    private void GetProcessByPid()
+    {
+        try
+        {
+            Console.WriteLine("Enter pid:");
+            int pid = Convert.ToInt32(Console.ReadLine());
+            var process = Process.GetProcessById(pid);
+            Console.WriteLine($"{process.ProcessName}");
+        } catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+       
+    }
+    private void ShowAllProcessesFilter()
     {
         //Вивести у консоль перелік процесів та ті, які повторюються порахувати їх кількість і вивести напроти імені
         //процеса цю кількість
         Process[] processes = Process.GetProcesses();
-        Dictionary<String, int> procs = new Dictionary<String, int>();
+        Dictionary<String, int> taskManager = new Dictionary<String, int>();
         foreach (var process in processes)
         {
+            string processName =string.Empty;
             try
             {
-                Console.WriteLine($"{process.ProcessName} PID: {process.Id}");
+                processName = process.ProcessName;
             }
-            catch(Exception)
+            catch (Exception)
             {
-                Console.WriteLine("Unknown process");
+                processName = "unknown";
             }
-         
+            if(taskManager.ContainsKey(processName))
+            {
+                taskManager[processName] += 1;
+            }
+            else
+            {
+                taskManager[processName] = 1;
+            }
+        }
+        foreach (var process in taskManager)
+        {
+            Console.WriteLine($"{process.Key} {process.Value}");
+        }
+    }
+    private void ShowAllProcesses()
+    {
+        Process[] processes = Process.GetProcesses();
+
+        foreach (var process in processes)
+        {
+            Console.WriteLine($"{process.ProcessName} PID: {process.Id}");
+        }
+    }
+    private void CreateProcess()
+    {
+        Console.WriteLine("Enter programm name: ");
+        string? programm = Console.ReadLine();
+        if (programm != null)
+        {
+            Console.WriteLine(Process.Start(programm).Id) ;
         }
     }
 }
+
+/*
+ 1) Якщо ви процес запустили, і він ще працює, то знову не запускати
+ 2) Зробити метод, який дозволить вбити обраний процес
+ */
