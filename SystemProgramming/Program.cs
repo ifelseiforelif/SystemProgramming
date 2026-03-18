@@ -4,6 +4,7 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        new ProcessDemo().Run();
+        //new ProcessDemo().Run();
+        new WorkerDllCPlusPlus().Run();
     }
 }

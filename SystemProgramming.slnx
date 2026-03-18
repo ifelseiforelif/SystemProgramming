@@ -1,3 +1,10 @@
 <Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Calculator/Calculator.vcxproj" Id="6f0de96d-39de-445d-93c6-2213064a2c1a" />
   <Project Path="SystemProgramming/SystemProgramming.csproj" />
+  <Project Path="TestProgramm/TestProgramm.csproj" Id="4afd07d5-f61d-406a-9a8b-e25a4831f18c" />
 </Solution>
