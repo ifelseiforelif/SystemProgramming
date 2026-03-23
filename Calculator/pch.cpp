@@ -7,17 +7,17 @@
 #define MYLIB_EXPORTS
 
 Calculator* CreateCalculatorObject() {
-		return new Calculator();
-	}
+	return new Calculator();
+}
 
-	void DeleteCalculatorObject(Calculator* obj) {
-		delete obj;
-	}
+void DeleteCalculatorObject(Calculator* obj) {
+	delete obj;
+}
 
-	int Add(Calculator* obj, int a, int b) {
-		if (obj != nullptr) {
-			return obj->Add(a, b);
-		}
-		throw "object is nullptr";
+int Add(Calculator* obj, int a, int b) {
+	if (obj != nullptr) {
+		return obj->Add(a, b);
 	}
+	throw "object is nullptr";
+}
 
