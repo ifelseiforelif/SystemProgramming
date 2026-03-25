@@ -1,75 +1,153 @@
 ﻿using System.Threading;
 using System.Linq;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 namespace SystemProgramming;
 
+class Pizza
+{
+    public string? Name { get; set; }
+    public int Price { get; set; }
+    public override string ToString()
+    {
+        return $"{Name} {Price}";
+    }
+}
+class Currency
+{
+    public int r030 { get; set; }
+    public string? txt { get; set; }
+    public decimal rate { get; set; }
+
+    public override string ToString()
+    {
+        return $"Currency: {txt} Rate: {rate}";
+    }
+
+}
 
 internal class Program
 {
-    private static object _locker = new object();   
-    private static bool isWork = true;
-    private static int total = 0;
-    static void TestThread(object n)
+    #region Lock
+    //private static object _locker = new object();   
+    //private static bool isWork = true;
+    //private static int total = 0;
+    //static void TestThread(object n)
+    //{
+    //    for (int i = 0; i < (int)n; i++)
+    //    {
+    //        if (isWork == false)
+    //        {
+    //            break;
+    //        }
+    //        Console.WriteLine($"Thread # {Thread.CurrentThread.ManagedThreadId} {i}");
+    //        Thread.Sleep(500);
+    //    }
+    //    //Thread.Sleep(3000);
+
+    //    //Console.WriteLine("Start TestThread");
+    //    //Console.WriteLine($"Core Main {Thread.GetCurrentProcessorId()}");
+    //    //Console.WriteLine($"Thread # {Thread.CurrentThread.ManagedThreadId}");
+    //    //Console.WriteLine("Finish TestThread");
+    //}
+
+    //static void Sum(object numbers)
+    //{
+
+    //    int[] array = (int[])numbers;
+    //    total += array.Sum();
+
+
+    //}
+
+    //static void Up()
+    //{
+    //    //RACE CONDITION
+    //    const int N = 10;
+    //    for (int i=0;i<N;i++)
+    //    {
+    //        lock (_locker)
+    //        {
+    //            ++total;
+    //        }
+
+    //        Thread.Sleep(1);
+    //    }
+    //}
+    #endregion
+    private static readonly string _url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";  
+
+    
+
+    static async Task<List<Currency>?> GetCurrency()
     {
-        for (int i = 0; i < (int)n; i++)
+        using(HttpClient client = new HttpClient())
         {
-            if (isWork == false)
+            try
             {
-                break;
+                var response = await client.GetStringAsync(_url);
+                var obj = JsonSerializer.Deserialize<List<Currency>>(response);
+                if (obj != null)
+                {
+                    return obj;
+
+                }        
             }
-            Console.WriteLine($"Thread # {Thread.CurrentThread.ManagedThreadId} {i}");
-            Thread.Sleep(500);
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+            return null;
         }
-        //Thread.Sleep(3000);
-
-        //Console.WriteLine("Start TestThread");
-        //Console.WriteLine($"Core Main {Thread.GetCurrentProcessorId()}");
-        //Console.WriteLine($"Thread # {Thread.CurrentThread.ManagedThreadId}");
-        //Console.WriteLine("Finish TestThread");
     }
 
-    static void Sum(object numbers)
+    static async Task Main(string[] args)
     {
 
-        int[] array = (int[])numbers;
-        total += array.Sum();
-       
-
-    }
-
-    static void Up()
-    {
-        //RACE CONDITION
-        const int N = 10;
-        for (int i=0;i<N;i++)
+        var data = await GetCurrency();
+        if (data != null)
         {
-            lock (_locker)
+            foreach (var item in data)
             {
-                ++total;
+                Console.WriteLine(item);
             }
-
-            Thread.Sleep(1);
         }
-    }
-    static void Main(string[] args)
-    {
-        const int N = 3;
-        CountdownEvent done = new (N);
-        Console.WriteLine("Start main");
-        for (int i = 0; i < N; i++)
-        {
-            ThreadPool.QueueUserWorkItem(_ => {
-                Console.WriteLine("Thread start");
-                Thread.Sleep(500);
-                Console.WriteLine("Thread finish");
-                done.Signal();
-            });
-        }
+        Console.ReadLine();
 
 
-        done.Wait();
-        Console.WriteLine("End Main");
-   
+        //Console.WriteLine("Робимо замовлення піци");
+        //var pizza = DoPizza();
+        //int i = 0;
+        //while (!pizza.IsCompleted)
+        //{
+
+        //    Console.WriteLine($"Ми працюємо {i}....");
+        //    Thread.Sleep(500);
+        //    i++;
+
+        //}
+
+        //pizza.Wait();
+        //Console.WriteLine("Отримали піцу");
+        //Console.WriteLine(pizza.Result);
+
+        //const int N = 3;
+        //CountdownEvent done = new (N);
+        //Console.WriteLine("Start main");
+        //for (int i = 0; i < N; i++)
+        //{
+        //    ThreadPool.QueueUserWorkItem(_ => {
+        //        Console.WriteLine("Thread start");
+        //        Thread.Sleep(500);
+        //        Console.WriteLine("Thread finish");
+        //        done.Signal();
+        //    });
+        //}
+
+
+        //done.Wait();
+        //Console.WriteLine("End Main");
+
 
         //const int COUNT_THREADS = 5;
         //Thread[] threads = new Thread[COUNT_THREADS];
@@ -143,5 +221,24 @@ internal class Program
         //Console.WriteLine($"Total: {total} Time: {time.ElapsedMilliseconds} ms");
 
 
+    }
+
+
+
+
+
+    static async Task<Pizza> DoPizza()
+    {
+        Console.WriteLine("Отримали замовлення");
+        Console.WriteLine("Починаємо готувати");
+        await Task.Delay(500);
+        Console.WriteLine("Готуємо тісто ");
+        await Task.Delay(1000);
+        Console.WriteLine("Готуємо начинку ");
+        await Task.Delay(3000);
+        Console.WriteLine("Випікаємо піцу тісто ");
+        await Task.Delay(3000);
+        Console.WriteLine("Все готове ");
+        return new Pizza { Name = "Margarita", Price = 300 };
     }
 }
