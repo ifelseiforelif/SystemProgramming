@@ -53,34 +53,52 @@ internal class Program
     }
     static void Main(string[] args)
     {
-        const int COUNT_THREADS = 5;
-        Thread[] threads = new Thread[COUNT_THREADS];
-        for (int i = 0; i < COUNT_THREADS; i++)
+        const int N = 3;
+        CountdownEvent done = new (N);
+        Console.WriteLine("Start main");
+        for (int i = 0; i < N; i++)
         {
-            threads[i] = new Thread(Up);
-            threads[i].Start(); 
+            ThreadPool.QueueUserWorkItem(_ => {
+                Console.WriteLine("Thread start");
+                Thread.Sleep(500);
+                Console.WriteLine("Thread finish");
+                done.Signal();
+            });
         }
-        for (int i = 0; i < COUNT_THREADS; i++)
-        {
-            threads[i].Join();
-        }
-        Console.WriteLine("Total {0}", total);
-            //Thread thread = new Thread(() =>
-            //{
-            //    Console.WriteLine($"Thread by name {Thread.CurrentThread.Name} start....");
-            //    for (int i = 0; i < 10; i++)
-            //    {
-            //        Console.WriteLine(i);
-            //    }
 
-            //});
-            //if(thread.Name==null)
-            //{
-            //    thread.Name = "Test";
-            //}
-            //thread.Start();
-            //thread.Join();
-            Console.WriteLine("Main end");
+
+        done.Wait();
+        Console.WriteLine("End Main");
+   
+
+        //const int COUNT_THREADS = 5;
+        //Thread[] threads = new Thread[COUNT_THREADS];
+        //for (int i = 0; i < COUNT_THREADS; i++)
+        //{
+        //    threads[i] = new Thread(Up);
+        //    threads[i].Start(); 
+        //}
+        //for (int i = 0; i < COUNT_THREADS; i++)
+        //{
+        //    threads[i].Join();
+        //}
+        //Console.WriteLine("Total {0}", total);
+        //Thread thread = new Thread(() =>
+        //{
+        //    Console.WriteLine($"Thread by name {Thread.CurrentThread.Name} start....");
+        //    for (int i = 0; i < 10; i++)
+        //    {
+        //        Console.WriteLine(i);
+        //    }
+
+        //});
+        //if(thread.Name==null)
+        //{
+        //    thread.Name = "Test";
+        //}
+        //thread.Start();
+        //thread.Join();
+        //Console.WriteLine("Main end");
 
 
         #region Threading Intro
